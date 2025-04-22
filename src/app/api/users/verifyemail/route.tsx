@@ -8,12 +8,12 @@ export async function POST(req: NextRequest) {
     try {
         const reqBody = await req.json();
         const { token } = reqBody;
-        const currentTime = new Date(); // Current time
+        const currentTime = new Date(); 
 
-        // Find the user with the token and ensure the token is still valid (not expired)
+        // Ensure the token is valid and has not expired
         const user = await User.findOne({
             verifyToken: token,
-            verifyTokenExpiry: { $gt: currentTime } // Check if verifyTokenExpiry is greater than currentTime
+            verifyTokenExpiry: { $gt: currentTime } // Token is valid if expiry is greater than current time
         });
 
         if (!user) {
@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
 
         // Update the user's verification status
         user.isverified = true;
-        user.verifyToken = undefined;
-        user.verifyTokenExpiry = undefined;
+        user.verifyToken = undefined; // Clear the token
+        user.verifyTokenExpiry = undefined; // Clear the token expiry date
         await user.save();
 
         return NextResponse.json({ message: "Email verified successfully", success: true });
